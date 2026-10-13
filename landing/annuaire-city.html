@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Annuaire City — Fichier de prospects locaux en CSV</title>
+<meta name="description" content="Annuaire City liste les commerces d'un secteur et exporte un fichier de prospects propre en CSV.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Annuaire City — Ton fichier de prospects">
+<meta property="og:description" content="Un métier, une ville. Exporte un CSV propre de commerces locaux, prêt pour l'appel ou la relance.">
+<meta property="og:image" content="https://TON-DOMAINE/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 22'%3E%3Cpath d='M9 1a8 8 0 0 0-8 8c0 6 8 12 8 12s8-6 8-12a8 8 0 0 0-8-8z' fill='%2375a6ff'/%3E%3C/svg%3E">
+<script>(function(){try{var s=localStorage.getItem('theme')}catch(e){}var p=new URLSearchParams(location.search).get('theme');var t=p||s||'base';if(t!=='base')document.documentElement.dataset.theme=t})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Public+Sans:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--fond:oklch(0.19 0.06 265);--panneau:oklch(0.23 0.066 265);--releve:oklch(0.27 0.069 265);--encre:oklch(0.95 0.01 85);--sourd:oklch(0.74 0.048 265);--filet:oklch(0.34 0.06 265);--pin:oklch(0.74 0.17 265);--sur-pin:oklch(0.18 0.03 265);--pin-trait:oklch(0.78 0.145 265);--r-btn:2px;--r-pan:0;--r-pas:999px;--t-xs:11px;--t-s:14px;--t-m:16px;--t-xl:clamp(36px,7vw,64px);--f-d:'Fraunces',Georgia,serif;--f-t:'Public Sans',system-ui,sans-serif;--f-m:'DM Mono',ui-monospace,monospace}
+html[data-theme="clair"]{--fond:oklch(0.97 0.015 85);--panneau:oklch(0.995 0.006 85);--releve:oklch(0.92 0.021 85);--encre:oklch(0.23 0.084 265);--sourd:oklch(0.47 0.06 265);--filet:oklch(0.86 0.018 85);--pin:oklch(0.42 0.17 265);--sur-pin:oklch(0.98 0.01 85);--pin-trait:oklch(0.42 0.17 265)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fond);color:var(--encre);font:400 var(--t-m)/1.55 var(--f-t)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--pin-trait);outline-offset:3px}
+.w{max-width:1080px;margin:0 auto;padding:0 16px}
+.top{border-bottom:1px solid var(--filet);position:sticky;top:0;z-index:5;background:var(--fond)}
+.top .w{display:flex;justify-content:space-between;align-items:center;height:58px}
+.mk{font:700 22px var(--f-d);letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.mk svg{color:var(--pin-trait)}
+.tg{background:none;border:1px solid var(--filet);color:var(--sourd);padding:10px;border-radius:var(--r-btn);cursor:pointer;display:flex}
+.hero{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;padding:56px 0 64px;align-items:start}
+.eye{font:500 var(--t-xs) var(--f-m);letter-spacing:.14em;text-transform:uppercase;color:var(--pin-trait);margin:0 0 14px}
+h1{font:500 var(--t-xl)/1.02 var(--f-d);letter-spacing:-.025em;margin:0 0 18px;text-wrap:balance}
+h1 b{font-weight:700}
+.lead{color:var(--sourd);max-width:42ch;text-wrap:pretty;margin:0 0 26px}
+.btn{font:600 var(--t-s) var(--f-t);padding:13px 20px;border-radius:var(--r-btn);border:1px solid var(--pin);background:var(--pin);color:var(--sur-pin);cursor:pointer;text-decoration:none;display:inline-block}
+.btn.g{background:none;border-color:var(--filet);color:var(--encre)}
+.acts{display:flex;gap:10px;flex-wrap:wrap}
+.pan{background:var(--panneau);border:1px solid var(--filet);border-radius:var(--r-pan)}
+.pan-h{display:flex;justify-content:space-between;font:500 var(--t-xs) var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--sourd);padding:12px 16px;border-bottom:1px solid var(--filet)}
+.frm{display:grid;grid-template-columns:1fr 1fr 74px;gap:8px;padding:14px 16px;border-bottom:1px solid var(--filet)}
+.frm label{font:500 var(--t-xs) var(--f-m);color:var(--sourd);display:grid;gap:4px}
+.frm input,.frm select{font:400 var(--t-m) var(--f-t);color:var(--encre);background:var(--releve);border:1px solid var(--filet);border-radius:var(--r-btn);padding:9px 10px;width:100%;min-width:0}
+.frm .btn{grid-column:1/-1}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--filet);font:400 var(--t-xs) var(--f-m);color:var(--sourd);flex-wrap:wrap}
+.bar label{display:flex;gap:6px;align-items:center}
+.bar button{font:500 var(--t-xs) var(--f-m);background:none;border:1px solid var(--filet);color:var(--encre);padding:6px 10px;min-height:40px;border-radius:var(--r-btn);cursor:pointer}
+.bar button:disabled{opacity:.4;cursor:default}
+.rows{max-height:340px;overflow:auto}
+.row{display:grid;grid-template-columns:1.3fr 1fr .5fr;gap:10px;padding:11px 16px;border-bottom:1px solid var(--filet);font-size:var(--t-s);animation:in .3s ease backwards}
+.row:last-child{border-bottom:0}
+.row>div{min-width:0}
+.row b{font-weight:600;display:block}
+.row span,.row em{font:400 var(--t-xs) var(--f-m);color:var(--sourd);font-style:normal;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .ml{color:var(--pin-trait)}
+.nt{text-align:right}
+.nt b{font-family:var(--f-m)}
+.vide{padding:34px 16px;color:var(--sourd);font:400 var(--t-s) var(--f-m)}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.sec{padding:56px 0;border-top:1px solid var(--filet)}
+h2{font:500 clamp(28px,4.4vw,40px)/1.1 var(--f-d);letter-spacing:-.02em;margin:0 0 22px;max-width:20ch}
+.csv{font:400 var(--t-s)/1.9 var(--f-m);background:var(--panneau);border:1px solid var(--filet);padding:16px;overflow-x:auto;white-space:nowrap;margin:0 0 14px}
+.csv i{color:var(--pin-trait);font-style:normal}
+.note{color:var(--sourd);font-size:var(--t-s);max-width:60ch}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--filet)}
+.pl{padding:22px 18px;border-right:1px solid var(--filet);display:grid;gap:10px;align-content:start}
+.pl:last-child{border-right:0}
+.pl.on{background:var(--panneau)}
+.pl h3{font:500 var(--t-xs) var(--f-m);letter-spacing:.12em;text-transform:uppercase;margin:0;color:var(--sourd)}
+.pl .px{font:700 34px var(--f-d)}
+.pl .px small{font:400 var(--t-s) var(--f-t);color:var(--sourd)}
+.pl ul{margin:0;padding:0;list-style:none;font-size:var(--t-s);display:grid;gap:6px}
+.pl li::before{content:"— ";color:var(--pin-trait)}
+.pas{font:500 var(--t-xs) var(--f-m);background:var(--pin);color:var(--sur-pin);padding:3px 8px;border-radius:var(--r-pas);justify-self:start}
+footer{border-top:1px solid var(--filet);padding:28px 0 40px;font:400 var(--t-xs)/1.7 var(--f-m);color:var(--sourd)}
+footer a{color:var(--pin-trait)}
+.legal{display:grid;gap:12px;font-size:var(--t-s);max-width:70ch}
+.legal h3{font:500 var(--t-xs) var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--sourd);margin:14px 0 0}
+.legal p{margin:0;color:var(--sourd)}
+.lg{position:fixed;inset:0;z-index:20;overflow:auto;background:var(--fond);color:var(--encre);padding:20px 16px 40px}
+.lg[hidden]{display:none}
+.lk{font:inherit;color:var(--pin-trait);background:none;border:0;padding:8px 2px;text-decoration:underline;cursor:pointer}
+.lg .legal{max-width:640px;margin:0 auto}
+.lg h2{font:500 28px/1.15 var(--f-d);margin:0 0 6px}
+.lg p{color:var(--encre)}
+.lg-x{display:block;width:max-content;margin:0 0 8px auto;font:500 var(--t-xs) var(--f-m);background:none;border:1px solid var(--filet);color:var(--encre);padding:8px 12px;min-height:40px;border-radius:var(--r-btn);cursor:pointer}
+.ck{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--panneau);border-top:1px solid var(--filet);padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:var(--t-s)}
+.ck[hidden]{display:none}
+.ck p{margin:0;color:var(--sourd);max-width:70ch}
+.ck button{font:600 var(--t-s) var(--f-t);padding:10px 16px;border-radius:var(--r-btn);border:1px solid var(--pin);background:var(--pin);color:var(--sur-pin);cursor:pointer}
+@media(max-width:820px){.hero{grid-template-columns:1fr;padding:36px 0 44px;gap:30px}.plans{grid-template-columns:1fr}.pl{border-right:0;border-bottom:1px solid var(--filet)}.pl:last-child{border-bottom:0}}
+@media(max-width:420px){.frm{grid-template-columns:1fr 1fr}.frm label:nth-child(3){grid-column:1/-1}.row{grid-template-columns:1fr .45fr}.row .ad{display:none}}
+@media(prefers-reduced-motion:reduce){.row{animation:none}}
+
+.gs .row{animation:none}
+.m{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.mi{display:inline-block;will-change:transform}
+.csv i{display:inline-block}
+.x-ok{border-color:var(--pin-trait)!important;color:var(--pin-trait)!important}
+</style>
+</head>
+<body>
+<header class="top"><div class="w">
+<div class="mk"><svg width="18" height="22" viewBox="0 0 18 22" aria-hidden="true"><path d="M9 1a8 8 0 0 0-8 8c0 6 8 12 8 12s8-6 8-12a8 8 0 0 0-8-8z" fill="currentColor"/><circle cx="9" cy="9" r="3" fill="var(--fond)"/></svg>Annuaire City</div>
+<button class="tg" id="themeToggle" type="button"></button>
+</div></header>
+<main class="w">
+<section class="hero">
+<div>
+<p class="eye">Prospection locale</p>
+<h1>Un métier, une ville. <b>Ton fichier de prospects.</b></h1>
+<p class="lead">Annuaire City liste les commerces d'un secteur : nom, téléphone, email, site, adresse, note. Tu exportes un CSV propre, prêt pour l'appel ou la relance.</p>
+<div class="acts"><a class="btn" href="#demo">Essayer la démo</a></div>
+</div>
+<div class="pan" id="demo">
+<div class="pan-h"><span>Démo — données fictives</span><span id="cnt">0 fiche</span></div>
+<form class="frm" id="f">
+<label>Métier<input id="m" value="Boulangerie" required></label>
+<label>Ville<input id="v" value="Lyon" required></label>
+<label>Rayon<select id="d"><option>2 km</option><option selected>5 km</option><option>10 km</option></select></label>
+<button class="btn" type="submit">Lancer la recherche</button>
+</form>
+<div class="bar"><label><input type="checkbox" id="em"> Avec email seulement</label><button id="x" type="button" disabled>Exporter CSV</button></div>
+<div class="rows" id="r"><p class="vide">Lance une recherche pour voir les fiches.</p></div>
+</div>
+</section>
+<section class="sec">
+<h2>Huit colonnes. Rien à nettoyer.</h2>
+<div class="csv"><i>nom</i>;<i>telephone</i>;<i>email</i>;<i>site</i>;<i>categorie</i>;<i>adresse</i>;<i>note</i>;<i>avis</i></div>
+<p class="note">Option réseaux : Instagram, Facebook, LinkedIn en colonnes en plus. Les emails viennent du site de chaque commerce.</p>
+</section>
+<section class="sec" id="tarifs">
+<h2>Paie au fichier, pas à la fiche.</h2>
+<div class="plans">
+<div class="pl"><h3>Essai</h3><div class="px">0 € <small>/ mois</small></div><ul><li>3 recherches</li><li>50 fiches max</li><li>Export CSV</li></ul></div>
+<div class="pl on"><span class="pas">Le plus pris</span><h3>Artisan</h3><div class="px">19 € <small>/ mois</small></div><ul><li>40 recherches</li><li>Emails + réseaux</li><li>Plusieurs villes</li></ul></div>
+<div class="pl"><h3>Agence</h3><div class="px">59 € <small>/ mois</small></div><ul><li>Recherches illimitées</li><li>Lots de métiers</li><li>3 comptes</li></ul></div>
+</div>
+</section>
+</main>
+<footer><div class="w">Annuaire City. Les coordonnées pro sont des données personnelles : RGPD applicable, à vérifier avant tout envoi. Démo sans appel réseau, numéros de la plage fictive 01 99 00. <button class="lk" type="button" data-ouvre="rgpd">RGPD</button> · <button class="lk" type="button" data-ouvre="cgu">CGU</button></div></footer>
+<section class="lg" id="rgpd" hidden aria-label="Données personnelles"><button class="lg-x" type="button">Fermer</button><div class="legal"><h2>Données personnelles (RGPD)</h2>
+<h3>Quelles données</h3>
+<p>Les fiches affichées sont des coordonnées professionnelles de commerces, issues de sources publiques. Aucune donnée n'est envoyée à un serveur pendant la démo.</p>
+<h3>Responsable du traitement</h3>
+<p>[NOM DE TA SOCIÉTÉ], [ADRESSE], contact : [EMAIL DE CONTACT].</p>
+<h3>Base légale et finalité</h3>
+<p>Intérêt légitime pour la prospection commerciale B2B. Les données servent uniquement à contacter les commerces concernés.</p>
+<h3>Vos droits</h3>
+<p>Vous pouvez demander l'accès, la rectification, l'effacement ou vous opposer au traitement de vos données en écrivant à [EMAIL DE CONTACT]. Une réponse vous est donnée dans un délai d'un mois.</p>
+</div></section>
+<section class="lg" id="cgu" hidden aria-label="Conditions générales"><button class="lg-x" type="button">Fermer</button><div class="legal"><h2>Conditions générales d'utilisation</h2>
+<h3>Objet</h3>
+<p>Annuaire City fournit un outil de recherche et d'export de fiches de commerces. L'utilisation du service implique l'acceptation des présentes conditions.</p>
+<h3>Usage</h3>
+<p>Les fiches exportées doivent servir à une prospection conforme au RGPD et à la législation en vigueur. Toute revente ou diffusion massive des données est interdite.</p>
+<h3>Responsabilité</h3>
+<p>Les données proviennent de sources publiques et peuvent être incomplètes ou obsolètes. [NOM DE TA SOCIÉTÉ] ne garantit pas leur exactitude.</p>
+<h3>Droit applicable</h3>
+<p>Les présentes conditions sont soumises au droit français.</p>
+</div></section>
+<div class="ck" id="ck" hidden><p>Ce site n'utilise aucun cookie de suivi. Seul un réglage d'affichage (mode clair ou sombre) est enregistré sur ton appareil.</p><button id="ckOk" type="button">Compris</button></div>
+<script>
+var SUN='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+var MOON='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+function updateToggle(t){var b=document.getElementById('themeToggle'),c=t==='clair';b.innerHTML=c?MOON:SUN;b.setAttribute('aria-pressed',String(c));b.setAttribute('aria-label',c?'Passer en mode sombre':'Passer en mode clair')}
+function setTheme(t){if(t&&t!=='base')document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme;try{localStorage.setItem('theme',t)}catch(e){}updateToggle(t)}
+document.getElementById('themeToggle').addEventListener('click',function(){var c=document.documentElement.dataset.theme||'base';setTheme(c==='base'?'clair':'base')});
+updateToggle(document.documentElement.dataset.theme||'base');
+
+var SUF=['du Marché','Saint-Roch','des Halles','Pasteur','Centrale','du Port','Gambetta','des Arts','Jean-Jaurès','du Parc','Voltaire','de la Gare','Lafayette','des Lilas'];
+var RUE=['rue Victor-Hugo','place Bellecour','cours Gambetta','rue de la République','avenue Foch','rue Pasteur','quai Saint-Antoine'];
+var data=[];
+function rnd(s){return function(){s=(s*9301+49297)%233280;return s/233280}}
+function slug(t){return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'')}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function gen(m,v,k){var seed=0,s=m+v+k;for(var i=0;i<s.length;i++)seed=(seed*31+s.charCodeAt(i))%233280;var r=rnd(seed),n=6+k*2,o=[];
+for(var j=0;j<n&&j<SUF.length;j++){var nom=m+' '+SUF[j],sl=slug(nom),hasW=r()>.25,hasE=hasW&&r()>.3;
+o.push({nom:nom,tel:'01 99 00 '+String(10+j*3).slice(-2)+' '+String(Math.floor(r()*90)+10),email:hasE?'contact@'+sl+'.exemple.fr':'',site:hasW?sl+'.exemple.fr':'',cat:m,adr:(Math.floor(r()*80)+1)+' '+RUE[Math.floor(r()*RUE.length)]+', '+v,note:(3.6+r()*1.4).toFixed(1),avis:Math.floor(r()*600)+8})}return o}
+function draw(){var em=document.getElementById('em').checked,l=data.filter(function(x){return!em||x.email}),R=document.getElementById('r');
+document.getElementById('cnt').textContent=l.length+(l.length>1?' fiches':' fiche');document.getElementById('x').disabled=!l.length;
+if(!l.length){R.innerHTML='<p class="vide">'+(data.length?'Aucune fiche avec email.':'Lance une recherche pour voir les fiches.')+'</p>';return}
+R.innerHTML=l.map(function(x,i){return'<div class="row" style="animation-delay:'+i*40+'ms"><div><b>'+esc(x.nom)+'</b><span>'+esc(x.tel)+'</span>'+(x.email?'<span class="ml">'+esc(x.email)+'</span>':'<span>pas d\'email</span>')+'</div><div class="ad"><em>'+esc(x.adr)+'</em><em>'+(esc(x.site)||'pas de site')+'</em></div><div class="nt"><b>'+x.note+'</b><span>'+x.avis+' avis</span></div></div>'}).join('')}
+document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();var m=document.getElementById('m').value.trim(),v=document.getElementById('v').value.trim(),k=document.getElementById('d').selectedIndex+1;if(!m||!v)return;data=gen(m,v,k);draw()});
+document.getElementById('em').addEventListener('change',draw);
+document.getElementById('x').addEventListener('click',function(){var em=document.getElementById('em').checked,l=data.filter(function(x){return!em||x.email}),k=['nom','tel','email','site','cat','adr','note','avis'];
+var csv='nom;telephone;email;site;categorie;adresse;note;avis\n'+l.map(function(x){return k.map(function(c){return'"'+String(x[c]).replace(/"/g,'""')+'"'}).join(';')}).join('\n');
+var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='annuaire-city-'+slug(data[0].cat)+'.csv';document.body.appendChild(a);a.click();a.remove()});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+if(!window.gsap)return;
+gsap.registerPlugin(ScrollTrigger);
+document.documentElement.classList.add('gs');
+
+// découpe du titre en mots (le <b> garde sa graisse)
+var h1=document.querySelector('h1');
+function couper(n){[].slice.call(n.childNodes).forEach(function(c){
+ if(c.nodeType===3){var f=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(function(w){if(!w)return;if(/^\s+$/.test(w)){f.appendChild(document.createTextNode(w));return}var m=document.createElement('span');m.className='m';m.innerHTML='<span class="mi"></span>';m.firstChild.textContent=w;f.appendChild(m)});n.replaceChild(f,c)}
+ else if(c.nodeType===1)couper(c)})}
+couper(h1);
+
+// prix : le chiffre dans un span pour le compteur
+document.querySelectorAll('.pl .px').forEach(function(p){var t=p.firstChild,v=parseInt(t.textContent,10);var s=document.createElement('span');s.className='nb';s.dataset.v=v;s.textContent=v;p.replaceChild(s,t);p.insertBefore(document.createTextNode(' € '),s.nextSibling)});
+
+var mm=gsap.matchMedia();
+mm.add('(prefers-reduced-motion: no-preference)',function(){
+ gsap.timeline({defaults:{ease:'power3.out',duration:.8}})
+  .from('.eye',{y:12,autoAlpha:0,duration:.5})
+  .from('.mi',{yPercent:110,stagger:.05},'-=.2')
+  .from('.lead',{y:16,autoAlpha:0},'-=.5')
+  .from('.acts .btn',{y:14,autoAlpha:0,stagger:.08,duration:.5},'-=.5')
+  .from('#demo',{x:40,autoAlpha:0,duration:.9},'<-.4');
+
+ gsap.utils.toArray('.sec h2').forEach(function(h){
+  gsap.from(h,{y:28,autoAlpha:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:h,start:'top 85%',once:true}})});
+
+ // colonnes du CSV qui s'allument au défilement
+ gsap.fromTo('.csv i',{autoAlpha:.15,y:8},{autoAlpha:1,y:0,stagger:.12,ease:'none',
+  scrollTrigger:{trigger:'.csv',start:'top 85%',end:'top 45%',scrub:1}});
+
+ ScrollTrigger.batch('.pl',{start:'top 88%',once:true,onEnter:function(b){
+  gsap.from(b,{y:30,autoAlpha:0,stagger:.12,duration:.7,ease:'power3.out'});
+  b.forEach(function(pl){var n=pl.querySelector('.nb'),o={v:0};gsap.to(o,{v:+n.dataset.v,duration:1.1,ease:'power2.out',onUpdate:function(){n.textContent=Math.round(o.v)}})});
+  gsap.from('.pas',{scale:.5,autoAlpha:0,duration:.6,delay:.4,ease:'back.out(3)'})}});
+});
+
+// résultats de la démo : entrée en cascade + compteur de fiches
+var base=draw;
+draw=function(){base();if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ var rows=document.querySelectorAll('.row');if(!rows.length)return;
+ gsap.from(rows,{y:12,autoAlpha:0,stagger:.045,duration:.45,ease:'power2.out',overwrite:true});
+ var c=document.getElementById('cnt'),n=rows.length,o={v:0};
+ gsap.to(o,{v:n,duration:.5+n*.04,ease:'power1.out',onUpdate:function(){var k=Math.round(o.v);c.textContent=k+(k>1?' fiches':' fiche')}})};
+
+// retour visuel sur l'export
+var x=document.getElementById('x'),lib=x.textContent;
+x.addEventListener('click',function(){x.textContent='Fichier prêt ✓';x.classList.add('x-ok');
+ gsap.fromTo(x,{scale:.92},{scale:1,duration:.5,ease:'back.out(4)'});
+ gsap.delayedCall(1.6,function(){x.textContent=lib;x.classList.remove('x-ok')})});
+})();
+</script>
+<script>
+// bannière cookies : affichée une seule fois
+(function(){
+var ck=document.getElementById('ck');
+try{if(localStorage.getItem('ck-ok'))return}catch(e){}
+ck.hidden=false;document.body.style.paddingBottom=ck.offsetHeight+'px';
+document.getElementById('ckOk').addEventListener('click',function(){ck.hidden=true;document.body.style.paddingBottom='';try{localStorage.setItem('ck-ok','1')}catch(e){}});
+})();
+</script>
+<script>
+// RGPD / CGU : affichage dans la page, sans navigation
+(function(){
+document.querySelectorAll('[data-ouvre]').forEach(function(b){b.addEventListener('click',function(){var s=document.getElementById(b.dataset.ouvre);s.hidden=false;s.scrollTop=0;s.querySelector('.lg-x').focus()})});
+document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var t=document.getElementById(a.getAttribute('href').slice(1));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}})});
+document.querySelectorAll('.lg-x').forEach(function(x){x.addEventListener('click',function(){x.closest('.lg').hidden=true})});
+})();
+</script>
+</body>
+</html>
