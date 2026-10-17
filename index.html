@@ -51,6 +51,8 @@ h1 b{font-weight:700}
 .row b{font-weight:600;display:block}
 .row span,.row em{font:400 var(--t-xs) var(--f-m);color:var(--sourd);font-style:normal;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .row .ml{color:var(--pin-trait)}
+.row .gm{margin-top:6px;font:500 var(--t-xs) var(--f-m);background:none;border:1px solid var(--filet);color:var(--pin-trait);padding:4px 8px;cursor:pointer}
+.row .msg{grid-column:1/-1;font-size:var(--t-s);line-height:1.5;white-space:normal;margin:0;border-left:2px solid var(--pin-trait);padding:4px 0 4px 10px}
 .nt{text-align:right}
 .nt b{font-family:var(--f-m)}
 .vide{padding:34px 16px;color:var(--sourd);font:400 var(--t-s) var(--f-m)}
@@ -181,7 +183,7 @@ updateToggle(document.documentElement.dataset.theme||'base');
 
 var SUF=['du Marché','Saint-Roch','des Halles','Pasteur','Centrale','du Port','Gambetta','des Arts','Jean-Jaurès','du Parc','Voltaire','de la Gare','Lafayette','des Lilas'];
 var RUE=['rue Victor-Hugo','place Bellecour','cours Gambetta','rue de la République','avenue Foch','rue Pasteur','quai Saint-Antoine'];
-var data=[];
+var data=[],vis=[],ville='';
 function rnd(s){return function(){s=(s*9301+49297)%233280;return s/233280}}
 function slug(t){return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'')}
 function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -190,10 +192,14 @@ for(var j=0;j<n&&j<SUF.length;j++){var nom=m+' '+SUF[j],sl=slug(nom),hasW=r()>.2
 o.push({nom:nom,tel:'01 99 00 '+String(10+j*3).slice(-2)+' '+String(Math.floor(r()*90)+10),email:hasE?'contact@'+sl+'.exemple.fr':'',site:hasW?sl+'.exemple.fr':'',cat:m,adr:(Math.floor(r()*80)+1)+' '+RUE[Math.floor(r()*RUE.length)]+', '+v,note:(3.6+r()*1.4).toFixed(1),avis:Math.floor(r()*600)+8})}return o}
 function draw(){var em=document.getElementById('em').checked,l=data.filter(function(x){return!em||x.email}),R=document.getElementById('r');
 document.getElementById('cnt').textContent=l.length+(l.length>1?' fiches':' fiche');document.getElementById('x').disabled=!l.length;
-if(!l.length){R.innerHTML='<p class="vide">'+(data.length?'Aucune fiche avec email.':'Lance une recherche pour voir les fiches.')+'</p>';return}
-R.innerHTML=l.map(function(x,i){return'<div class="row" style="animation-delay:'+i*40+'ms"><div><b>'+esc(x.nom)+'</b><span>'+esc(x.tel)+'</span>'+(x.email?'<span class="ml">'+esc(x.email)+'</span>':'<span>pas d\'email</span>')+'</div><div class="ad"><em>'+esc(x.adr)+'</em><em>'+(esc(x.site)||'pas de site')+'</em></div><div class="nt"><b>'+x.note+'</b><span>'+x.avis+' avis</span></div></div>'}).join('')}
-document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();var m=document.getElementById('m').value.trim(),v=document.getElementById('v').value.trim(),k=document.getElementById('d').selectedIndex+1;if(!m||!v)return;data=gen(m,v,k);draw()});
+vis=l;if(!l.length){R.innerHTML='<p class="vide">'+(data.length?'Aucune fiche avec email.':'Lance une recherche pour voir les fiches.')+'</p>';return}
+R.innerHTML=l.map(function(x,i){return'<div class="row" style="animation-delay:'+i*40+'ms"><div><b>'+esc(x.nom)+'</b><span>'+esc(x.tel)+'</span>'+(x.email?'<span class="ml">'+esc(x.email)+'</span>':'<span>pas d\'email</span>')+'<button class="gm" type="button" data-i="'+i+'">Écrire le message</button></div><div class="ad"><em>'+esc(x.adr)+'</em><em>'+(esc(x.site)||'pas de site')+'</em></div><div class="nt"><b>'+x.note+'</b><span>'+x.avis+' avis</span></div></div>'}).join('')}
+document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();var m=document.getElementById('m').value.trim(),v=document.getElementById('v').value.trim(),k=document.getElementById('d').selectedIndex+1;if(!m||!v)return;ville=v;data=gen(m,v,k);draw()});
 document.getElementById('em').addEventListener('change',draw);
+document.getElementById('r').addEventListener('click',function(e){var b=e.target.closest('.gm');if(!b)return;var x=vis[+b.dataset.i],row=b.closest('.row'),o=row.querySelector('.msg');if(!x)return;
+if(!o){o=document.createElement('p');o.className='msg';o.setAttribute('aria-live','polite');row.appendChild(o)}
+b.disabled=true;o.textContent='Rédaction…';
+fetch('/api/message',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom:x.nom,cat:x.cat,ville:ville})}).then(function(r){return r.json()}).then(function(d){o.textContent=d.message||d.error||'Erreur'}).catch(function(){o.textContent='Service indisponible.'}).finally(function(){b.disabled=false})});
 document.getElementById('x').addEventListener('click',function(){var em=document.getElementById('em').checked,l=data.filter(function(x){return!em||x.email}),k=['nom','tel','email','site','cat','adr','note','avis'];
 var csv='nom;telephone;email;site;categorie;adresse;note;avis\n'+l.map(function(x){return k.map(function(c){return'"'+String(x[c]).replace(/"/g,'""')+'"'}).join(';')}).join('\n');
 var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='annuaire-city-'+slug(data[0].cat)+'.csv';document.body.appendChild(a);a.click();a.remove()});
