@@ -39,6 +39,12 @@ export default async function handler(req, res) {
     statut: email.endsWith('@' + domaine) || email.endsWith('.' + domaine) ? 'trouve_sur_site' : 'autre_domaine'
   }));
 
+  // Recherche Hunter (optionnelle) : seulement si le site n'affiche aucun email du domaine
+  if (process.env.HUNTER_API_KEY && !emails.some(m => m.statut === 'trouve_sur_site')) {
+    const trouvesHunter = await chercherHunter(domaine, process.env.HUNTER_API_KEY);
+    emails.push(...trouvesHunter);
+  }
+
   // Vérification (optionnelle) : Reoon d'abord, Hunter si Reoon ne répond pas ; seulement si les clés sont définies
   if (process.env.REOON_API_KEY || process.env.HUNTER_API_KEY) {
     for (const m of emails.filter(m => m.statut === 'trouve_sur_site').slice(0, 5)) {
@@ -49,6 +55,19 @@ export default async function handler(req, res) {
   }
 
   return res.status(200).json({ site: accueil.url, emails, erreurs });
+}
+
+// Hunter domain-search : emails connus pour le domaine, avec un score de confiance (5 max, null si panne)
+export async function chercherHunter(domaine, cle) {
+  try {
+    const r = await fetch('https://api.hunter.io/v2/domain-search?' + new URLSearchParams({ domain: domaine, api_key: cle, limit: 5 }),
+      { signal: AbortSignal.timeout(DELAI_VERIF) });
+    if (!r.ok) return [];
+    const liste = ((await r.json()).data || {}).emails || [];
+    return liste.map(e => ({ email: String(e.value).toLowerCase(), statut: 'trouve_hunter', confiance: e.confidence ?? null }));
+  } catch {
+    return [];
+  }
 }
 
 // Hunter : 'verifie' si valide, 'risque' si accept_all, 'invalide' sinon ; null si l'API ne répond pas ou ne sait pas
