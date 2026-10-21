@@ -39,15 +39,31 @@ export default async function handler(req, res) {
     statut: email.endsWith('@' + domaine) || email.endsWith('.' + domaine) ? 'trouve_sur_site' : 'autre_domaine'
   }));
 
-  // Vérification Reoon (optionnelle) : seulement si la clé REOON_API_KEY est définie
-  if (process.env.REOON_API_KEY) {
+  // Vérification (optionnelle) : Reoon d'abord, Hunter si Reoon ne répond pas ; seulement si les clés sont définies
+  if (process.env.REOON_API_KEY || process.env.HUNTER_API_KEY) {
     for (const m of emails.filter(m => m.statut === 'trouve_sur_site').slice(0, 5)) {
-      const v = await verifier(m.email, process.env.REOON_API_KEY);
+      const v = (process.env.REOON_API_KEY && await verifier(m.email, process.env.REOON_API_KEY))
+        || (process.env.HUNTER_API_KEY && await verifierHunter(m.email, process.env.HUNTER_API_KEY));
       if (v) m.statut = v;
     }
   }
 
   return res.status(200).json({ site: accueil.url, emails, erreurs });
+}
+
+// Hunter : 'verifie' si valide, 'risque' si accept_all, 'invalide' sinon ; null si l'API ne répond pas ou ne sait pas
+export async function verifierHunter(email, cle) {
+  try {
+    const r = await fetch('https://api.hunter.io/v2/email-verifier?' + new URLSearchParams({ email, api_key: cle }),
+      { signal: AbortSignal.timeout(DELAI_VERIF) });
+    if (!r.ok) return null;
+    const statut = String(((await r.json()).data || {}).status || '').toLowerCase();
+    if (statut === 'unknown' || statut === '') return null;
+    if (statut === 'accept_all') return 'risque';
+    return statut === 'valid' ? 'verifie' : 'invalide';
+  } catch {
+    return null;
+  }
 }
 
 // Reoon : 'verifie' si livrable, 'risque' si catch-all, 'invalide' sinon ; null si l'API ne répond pas
