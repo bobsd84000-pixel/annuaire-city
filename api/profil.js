@@ -26,7 +26,7 @@ async function hoteSur(url) {
 }
 
 // Lecture avec délai, taille max et redirections vérifiées une par une
-async function lire(url) {
+export async function lire(url) {
   for (let i = 0; i <= MAX_REDIR; i++) {
     await hoteSur(url);
     const r = await fetch(url, {
