@@ -4,6 +4,7 @@
 import { lire } from './profil.js';
 
 const PAGES = ['/contact', '/contact.html', '/mentions-legales'];
+const DELAI_VERIF = 8000;
 const IGNORES = /\.(png|jpe?g|gif|svg|webp|css|js)$|@(example|sentry|wixpress|domain|email)\b/i;
 
 // Extrait les emails du HTML (liens mailto: et texte visible), sans doublons
@@ -38,5 +39,29 @@ export default async function handler(req, res) {
     statut: email.endsWith('@' + domaine) || email.endsWith('.' + domaine) ? 'trouve_sur_site' : 'autre_domaine'
   }));
 
+  // Vérification Reoon (optionnelle) : seulement si la clé REOON_API_KEY est définie
+  if (process.env.REOON_API_KEY) {
+    for (const m of emails.filter(m => m.statut === 'trouve_sur_site').slice(0, 5)) {
+      const v = await verifier(m.email, process.env.REOON_API_KEY);
+      if (v) m.statut = v;
+    }
+  }
+
   return res.status(200).json({ site: accueil.url, emails, erreurs });
+}
+
+// Reoon : 'verifie' si livrable, 'risque' si catch-all, 'invalide' sinon ; null si l'API ne répond pas
+export async function verifier(email, cle) {
+  try {
+    const r = await fetch('https://emailverifier.reoon.com/api/v1/verify?' + new URLSearchParams({ email, key: cle, mode: 'power' }),
+      { signal: AbortSignal.timeout(DELAI_VERIF) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    const statut = String(d.status || '').toLowerCase();
+    if (statut === 'catch_all' || d.is_catch_all) return 'risque';
+    if (statut === 'safe' || (statut === 'role_account' && d.is_deliverable === true)) return 'verifie';
+    return 'invalide';
+  } catch {
+    return null;
+  }
 }
