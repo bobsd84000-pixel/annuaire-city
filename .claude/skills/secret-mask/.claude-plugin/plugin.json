@@ -1,0 +1,5 @@
+{
+  "name": "secret-mask",
+  "version": "0.1.0",
+  "description": "Masque les clés (sk-ant-, eyJ, postgresql://) dans la sortie des outils avant que Claude la lise."
+}

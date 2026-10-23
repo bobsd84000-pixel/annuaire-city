@@ -1,0 +1,5 @@
+{
+  "name": "git-guard",
+  "version": "0.1.0",
+  "description": "Bloque git push vers main et propose develop à la place."
+}
